@@ -20,10 +20,10 @@
 \setlength{\parskip}{0pt} %(needs to be before titlepage and frontmatter to keep the table of contents lists short)
 \frontmatter
 \input{head/titlepage.tex}
-%\include{head/dedication}
+\include{head/dedication}
 \setcounter{page}{0}
-%\include{head/acknowledgements}
-%\include{head/preface}
+\include{head/acknowledgements}
+\include{head/preface}
 \include{head/abstracts}
 
 \cleardoublepage
@@ -41,7 +41,7 @@
 % \addcontentsline{toc}{chapter}{List of Tables} % adds an entry to the table of contents
 % \listoftables
 % your list of symbols here, if needed.
-\include{head/symbols}
+
 
 % space before each new paragraph according to the template guidelines.
 %(needs to be after titlepage and frontmatter to keep the table of contents lists short)
@@ -52,15 +52,15 @@
 %%%%% MAIN: The chapters of the thesis
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \mainmatter
-\include{main/ch0_introduction}
+\include{main/ch1_introduction}
+\cleardoublepage
+\part{Body 1}
+\include{main/ch2_figures_tables}
+\cleardoublepage
+\part{Body 2}
+\include{main/ch3_math}
+\include{main/ch4_more_text}
 
-\include{main/ch1_methods}
-%\part{Body 1}
-\include{main/ch2_results_stpa}
-%\part{Body 2}
-\include{main/ch3_results_adjoint}
-\include{main/ch4_fabrication}
-\include{main/ch5_conclusion}
 % use to end the last part if the thesis is composed of parts
 \addtocontents{toc}{\vspace{\normalbaselineskip}}
 \cleardoublepage
