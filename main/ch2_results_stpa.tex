@@ -1,52 +1,66 @@
 \cleardoublepage
-\chapter{Optimized Diffractive Optical Elements by STPA}
-In this chapter we will see some examples of tables and figures.
+\chapter{Optimization based on Perturbation Approach}
+In this chapter, we use parameter reconstruction using the gradient of the figure of merit calculated by step-transition perturbation approach(STPA)%\cite{Vallius2002}.
 \section{Process of optimization}
+Figure. shows an example of an one-dimensional binary phase grating profile characterized by depth, grating period, refractive indices, and transition points.
+
 \subsection{Figure of Merit}
+In this study, we use transition points as the set of design parameters $\mathbf{x} = \left[x_1\cdots x_k\cdots x_{2K}\right]$ and define the figure of merit which depends on transition points position $\mathbf{x}$:
+%%%%%%equation%%%%%%%%%%%%
+\begin{align}\label{eq:fom}
+F(\mathbf{x}) = \sum_{m=-M}^{M}(\eta_{m}(\mathbf{x})-\hat{\eta})^2
+\end{align}
+%%%%%%equation%%%%%%%%%%%%
+where figure of merit $F(\mathbf{x})$ that represents the difference between the calculated diffraction efficiency $\eta_{m}(\mathbf{x})$ in orders and  the average diffraction efficiency $ \hat{\eta}$. 
 \subsection{Design parameters}
+
 \subsection{Initial design}
+
 \subsection{Gradient calculation}
+The gradient of figure of merit with respect to the transition points $\nabla_\mathbf{x}F$ is crucial in determining the search direction to optima, which is the set of derivatives of figure of merit with respect to each transition point, i.e.
+\begin{align} \label{eq:gradient}
+\nabla_\mathbf{x}F=\left[\frac{\partial F}{{\partial x_1}},\cdots,\frac{\partial F}{{\partial  x_k}},\cdots,\frac{\partial F}{{\partial x_{2K}}}\right]
+\end{align}
+To find these derivatives, we apply chain rule when differentiating $F(\mathbf{x})$. 
+\begin{align}\label{eq:chain}
+\frac{\partial F}{\partial  x_k} = \sum_{m=-N}^{N} \frac{\partial F}{\partial \eta_m} \cdot \frac{\partial \eta_m}{\partial  x_k} 
+\end{align}
+where the first term $\frac{\partial F}{\partial \eta_m}$ is easily calculated by using Eq. \ref{eq:fom}. The second term in Eq. \ref{eq:chain}, however, remains to be found.
+RCWA is used to calculate the diffraction efficiencies, $2K+1$ system analyses are required to compute the gradient $\nabla_\mathbf{x}F$ because RCWA does not provide the analytical solution of derivatives of diffraction efficiency with respect to transition points $\frac{\partial \eta_m}{\partial x_k}$.
+Whereas, using STPA, we can describe an analytical solution of diffraction efficiency with respect to transition point positions of optical elements.
+It is allowed to calculate the gradient straightforwardly with accuracy as much as the approach based on the rigorous method if most of the features of the structure are bigger than the wavelength of the incident light.
+
 \section{One-dimensional diffractive optical elements}
+To apply the optimization method, we prepared several one-dimensional fan-out gratings which have different initial transition points position.
+The optimization result of a sample among them is introduced in this section. 
+The one-dimensional fan-out grating with binary surface profiles has a $692 nm$ height, $66$ transition points, and $200 \mu m$ grating period. 
+The target image is a $117$ spot array with equal spot intensity and spacing, and the full diffraction angle is $22^{\circ}$ from $-58^{th}$ to the $58^{th}$ diffraction orders.
+The refractive index of a dielectric layer is $1.46$ for Fused silica, and that of the air layer is $1.00$ were used.
+
 \subsection{Reconstruction results}
+Figure shows the diffraction properties of profile before and after optimization.
+To assess the uniformity in orders, we represent the value in orders as the difference of single diffraction efficiency of each order and the average one.
+Afterwhich, we compare the optimized results by gradient based on STPA and scalar TEA.
+We can observe that most of the values from optimized results with STPA are smaller compared to the initial results in Fig. 
+Whereas, in the optimized results with TEA, there are no significant improvements over the initial results. 
+For an accurate comparison, we calculated the total diffraction efficiency, UE in off-axis, and RMSE of 3 different profiles: Initial, STPA-based optimized, and TEA-based optimized one. 
+These values are represented in Table.
+The optimized profile with STPA and TEA have scarcely less total efficiency than that of initial profile.
+Through STPA-based optimization there is considerable improvement in UE in off-axis from $26.47\%$ to $12.39\%$ and RMSE from $0.079\%$ to $0.033\%$, while the improvement is small when using TEA-based optimization in  UE in off-axis from $26.47\%$ to $22.72\%$ and RMSE from $0.079\%$ to $0.059\%$.
 \subsection{Experimental results}
+For the experimental verification, we used $641 nm$ wavelength laser source with TE-polarization and measured the sample $6$ times with the same conditions.
+The average and standard deviation of measured diffraction efficiency in orders of the optimized sample are shown in the orange dot and error bar in Fig.
+To exclude the effects which may occur during measurement such as Fresnel reflection loss and power detector offset, both calculated and measured total diffraction efficiency were normalized to an identical value.
+Through the experimental results, we observed that the fabricated sample has UE in off-axis of $21.70 \%$ and RMSE of $0.061 \%$.
+The values are different from the values obtained by calculation.
+The reason is that the diffraction efficiency in orders often strongly depends on the errors in fabrication processes, e.g., etching depth, feature width, slope steepness, features rounding.
+To investigate the effect of such fabrication errors, we simulated the effect of an under-etch or over-etch in the features of our optimized grating.
+The calculated results from the modified grating with $200nm$ feature width deviation which including fabrication error are given in blue bar in the top of Fig. 
+The simulated grating has UE in off-axis of $21.44 \%$ and RMSE of $0.064 \%$.
+We observe positive agreement of the simulated data and the experimental data in the bottom of Fig.
+The average variation between the two data is $3.2 \%$ difference in diffraction efficiency in orders.
+
+Based on the investigation, we would be able to overcome the performance degradation due to fabrication mismatch which is shown in the sample used for this works, because the problem is not about the limit of our fabrication facilities, e.g., the minimum feature size that a lithography system can print.
+
 \section{Limits of optimization by STPA}
-Let's see how to make a well designed table.
 
-\begin{table}[tb]
-\caption[A floating table]{A floating table.}
-\label{tab:esempio}
-\centering
-\begin{tabular}{ccc}
-\toprule
-name & weight & food \\ 
-\midrule
-mouse	& 10 g	& cheese \\
-cat	& 1 kg	& mice \\
-dog	& 10 kg	& cats \\
-t-rex	& 10 Mg	& dogs \\
-\bottomrule 
-\end{tabular}
-\end{table}
-\textit{}
-
-The table~\ref{tab:esempio} is a floating table and was obtained with the following code:
-\begin{lstlisting}
-\begin{table}[tb]
-\caption[A floating table]{A floating table.}
-\label{tab:example}
-\centering
-\begin{tabular}{ccc}
-\toprule
-	name 	& weight & food	  \\ 
-\midrule
-	mouse	& 10  g	 & cheese \\
-	cat		&  1 kg	 & mice	  \\
-	dog		& 10 kg	 & cats   \\
-	t-rex	& 10 Mg	 & dogs	  \\
-\bottomrule 
-\end{tabular}
-\end{table}
-\end{lstlisting}
-
-\lipsum[1-2]
-\lipsum[3-8]

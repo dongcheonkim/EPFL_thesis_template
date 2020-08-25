@@ -1,120 +1,274 @@
 \cleardoublepage
 \chapter{Methods of Diffractive Optical Elements Design}
-In this chapter we will see some examples of tables and figures.
+
+In this chapter, we will introduce the theoretical background of the various different ways of modeling the diffraction process. 
+These models constitute the key part of the algorithms developed to simulate and optimize Diffractive Optical Elements (DOEs). 
+The validity regions and computational constraints will be analysed in details to identify the practical limits of different diffraction models.
 
 \section{Diffraction models}
-Let's see how to make a well designed table.
-\subsection{Scalar diffraction theory}
+Diffractive optical elements are microstructures employed in the modulation of the properties of light.
+Since the strucures often comprise wavelength-scale features, accurate analysis of the problem requiers that light be treated as an electromagnetic wave.
+Thus, we begin by introducing Maxwell's equations, which describe the properties of an electromagnetic faclitating accurate calculation of most diffractive phenomina.
+Several approximate methods also briefly described in the end of this parts.
 
-\begin{table}[tb]
-\caption[A floating table]{A floating table.}
-\label{tab:esempio}
-\centering
-\begin{tabular}{ccc}
-\toprule
-name & weight & food \\ 
-\midrule
-mouse	& 10 g	& cheese \\
-cat	& 1 kg	& mice \\
-dog	& 10 kg	& cats \\
-t-rex	& 10 Mg	& dogs \\
-\bottomrule 
-\end{tabular}
-\end{table}
+DOEs consist of surface reliefs with dimensions in micrometer ranges.
+The micro-structure permits the generation of a spatial distribution of light beams by modulating and transforming the amplitude and/or phase of the light propagated through them. For the propose of the simplicity, we consider only $y$ invariant wave propagation, i.e., the waves are assumed to propagate along the $xz$ plane.
 
-The table~\ref{tab:esempio} is a floating table and was obtained with the following code:
-\begin{lstlisting}
-\begin{table}[tb]
-\caption[A floating table]{A floating table.}
-\label{tab:example}
-\centering
-\begin{tabular}{ccc}
-\toprule
-	name 	& weight & food	  \\ 
-\midrule
-	mouse	& 10  g	 & cheese \\
-	cat		&  1 kg	 & mice	  \\
-	dog		& 10 kg	 & cats   \\
-	t-rex	& 10 Mg	 & dogs	  \\
-\bottomrule 
-\end{tabular}
-\end{table}
-\end{lstlisting}
+A diffraction grating is a periodic structure produces an array of regularly spaced beams by modulating the amplitude or the phase of the incident field.
+The Figure illustrates the propagation through binary grating with period $g$ and thickness $d$.
+The field illuminates the grating at an incident angle $\theta$.
+The grating generates a set of transmitted and reflected diffraction orders. 
+$n_1$ and $n_2$ are the refractive indices of air and a dielectric region, respectively.
+The fields behind and after the gratings region can be represented as sums of reflected and transmitted wave components.
+
+\begin{align}\label{eq:rayleigh}
+\begin{split}
+&U(x,z)= \sum_{m=-\infty}^{\infty}R_{m} exp\left[ ik_{xm}x-ik_{z}z \right] \qquad\qquad \text{if} \quad z\leq 0\\
+&U(x,z)= \sum_{m=-\infty}^{\infty}T_{m} exp\left[ ik_{xm}x-ik_{z}(z-d)\right] \qquad \text{if} \quad z \geq d
+\end{split}
+\end{align}
+where the complex amplitudes of the diffraction orders $R_m$ and $T_m$ are
+\begin{align}\label{eq:Rm_Tm}
+\begin{split}
+&R_{m}= \frac{1}{g}\int_0^g U(x,0)\exp(-ik_{xm}x)dx\\
+&T_{m}= \frac{1}{g}\int_0^g U(x,d)\exp(-ik_{xm}x)dx
+\end{split}
+\end{align}
+the wave vector component $k_x$ can only certain discrete values $k_{xm} = k_{x0} + 2 \pi m / g$, where $m$ is an diffraction order. The propagation angle $\theta_m$ of the $m$th diffraction order can be obtained from the grating equation
+\begin{align}\label{eq:diff_angle}
+n_2 \sin \theta_m = n_1 \sin \theta_i + m \lambda /g
+\end{align}
+while for the reflected diffraction orders one replaces $n_2$ by $n_1$ in \cref{eq:diff_angle}
+The diffraction efficiency $\eta_m$ is defined as the amount of light intensity that ends up into transmitted diffraction order.
 
 \subsection{Rigorous electromagnetic theory}
-\lipsum[1-2]
 
+Various rigorous techniques can be applied to calculate the diffraction efficiency of such a grating by solving Maxwell’s equations analytically%\cite{Liu2012}. We used the Matlab library RETICOLO written by J.P. Hugonin and P. Lalanne. It is based on Rigorous coupled wave analysis (RCWA), which also known as a Fourier modal method(FMM)%\cite{Knop1978,Peng1975,Burckhardt1966,Kaspar1973,Brenner2010}.
+In the modulated region of the grating for RCWA shown in Figure with the profile divided into z-invariant slices in which the refractive index distribution in the x-direction.
+The principle of the method is to present the refractive index profile and the field inside the grating region as Fourier series.
+The eigenvalue equation is solved for the waveguide modes in each slice.
+Finally, the resulting field expansion is matched at the interfaces of the slices with the boundary conditions under considering polarization, i.e., TE polarization and TM polarization.
+The number of eigenmodes taken into count needs to be chosen to sufficiently large%\cite{Li1997}. 
+The parameter is defined as $M$, which is referred to as Fourier orders $-M:M$. The accuracy of the simulation depends on this parameter%\cite{Moharam1995}.
+The convergence of the calculations has to be checked by simulating the diffraction efficiency as a function of the number of Fourier orders. If the efficiency reaches a stable value, the number of Fourier orders is high enough to ensure reliable results.
+Generally, TM polarization converges much slower than TE polarization%\cite{Moharam1995}.
+
+
+\subsection{Scalar diffraction theory}
+
+A simple approximate approach to determine the complex amplitudes and the diffraction efficiencies of the diffraction orders is to use the thin element approximation (TEA)\cite{goodman2005}. This method is often called scalar approximation or scalar theory in diffractive optics. When the grating is thin(the order of the wavelength) and with the minimum features of the structure, so call critical dimension, which is at least $10\lambda$, the optical path calculation yields sufficient accuracy for field distribution after the gratings.%The method is based on the assumptions that the grating is thin(phase shift is small than $2\pi$), the features of the structure are large compared with the wavelength of the incident beam, one speaks of the paraxial domain.
+In TEA the effect of gratings can be described by multiplying the incident field $U_{0}(x,0)$ with a complex-amplitude transmission function $t(x)$.  we can express the transmitted field as
+\begin{align}\label{eq:tranmitted}
+U_t(x,d)=t(x)U_o(x,0)
+\end{align}
+where $d$ is the depth of the grating. the transmission function is defined by calculating the optical path through the structure
+\begin{align}\label{eq:transmission}
+t(x)=\exp \left [ ik\int^d_0 n(x,z) dz \right ]
+\end{align}
+where $n(x,z)$ is the complex refractive index distribution of the grating. Also in TEA, the complex amplitudes $T_m$ of the transmitted diffraction orders are obtained using Fraunhofer approximation%\cite{herzig1997}.
 
 \section{Inverse design methods}
-Let's see now how to put one or several images in your text.
+
+The design methods for DOEs have been refined to such a degree that it has become possible to manipulate light in the almost arbitrary way.
+The goal of the grating design procedure is to find a structure that generates the required signal with the best possible diffraction efficiency. 
+
+The iterative Fourier transform algorithm(IFTA) is one of the most popular methods for designing the DOEs in the paraxial domain%\cite{Gerchberg1972,Fienup1982,Wyrowski1988}.
+IFTA has proved a powerful design approach that can easily be adapted for a variety of different design problems.
+
+Optimization, so call inverse design, of the diffraction structure, involves modifying an initial design to maximize or minimize a figure of merit which describes the grating's performance%\cite{Shirakawa2010}.
+Optimization of various types of parameters is a classical problem in diffractive optics. There are several widely used parametric optimization methods: Downhill Simplex method of Nelder-Mead%\cite{Nelder1964}
+, Powell's method%\cite{Powell1964}
+, and simulated annealing%\cite{Kirkpatrick1983,Turunen1989,Kim1990}.
+Especially, simulated annealing is the one of global optimization algorithms can be utilized in order to avoid local minima of the merit function.
+
+A usual task in the design of DOEs is to find a suitable profile shape, for example, by an optimization process. 
+Figure shows an example of a grating profile characterized by by depth $d$, grating period $g$ and transition points $x_{k}$. Normally, some parameters are selected as free optimization parameters, while others are fixed during the calculations.
+
+The use of optimization tools based on the combination of rigorous analysis and parametric optimization is often computationally heavy. we can use this method for the one-dimensional gratings with small gratings period, e.g., $g \leq 10\lambda$ %\cite{Noponen1992,Huttunen1994}. 
+Therefore, the optics and photonics community has investigated efficient methods for optimization techniques as demonstrated by the numerous optimizations of efficient splitters, couplers, etc%\cite{Miller2013,Steckiewicz2017,Hughes2017,Solak2002,Pomplun2007,Gonzalez2015,Snoek2012,Schneider2017}.
+
 \subsection{Gradient-based optimization}
+To obtain quick and stable convergence with high diffraction efficiency and low uniformity error, we use conjugate gradient methods%\cite{William_2007}.
+The coordinates of transition points $\vec{x_{n}}$ and $\vec{x_{n+1}}$ before and after the $n$th iteration are related by 
+\begin{align}
+\vec{x_{n+1}} = \vec{x_{n}} + \vec{h}(\vec{x_{n}})t
+\end{align}
+with
+\begin{align}
+\vec{h}(\vec{x_{n}})= - \vec{g}(\vec{x_{n}}) + \gamma_{n} \vec{h}(\vec{x_{n-1}})
+\end{align}
+where $\vec{g}(\vec{x})=(g_{1}(\vec{x}),\cdots,g_{2K}(\vec{x})) = (\frac{\partial \varepsilon(\vec{x})}{\partial x_{1}},\cdots ,\frac{\partial \varepsilon(\vec{x})}{\partial x_{2K}})$
+is the gradient of the Figure of merit, $t$ is the step of the gradient method, and
+\begin{align}
+\gamma_{n}=- \frac{\left \{\vec{g}(\vec{x_n})-\vec{g}(\vec{x_{n-1}})\right \}\cdot\vec{g}(\vec{x_n})}{\left| \vec{g}(\vec{x_{n-1}} \right|^2}
+\end{align}
+To define the step $t$ of the gradient method, we consider the merit function along the conjugate direction as a function of $t$
+\begin{align}
+\varepsilon \left[ \vec{x_n} + \vec{h}(\vec{x_n})t \right] = \varepsilon_1(t)
+\end{align}
+The optimum step size $t$ can be determined by forming a second-order Taylor series expansion of $\varepsilon_1(t)$ about the point $t=0$
+\begin{align}
+\varepsilon_1(t) = \varepsilon_1(0) + {\varepsilon_1}'(0)t +\frac{{\varepsilon_1}''(0)t^2}{2} \end{align}
+The second-order expansion of $\varepsilon_1(t)$ takes a minimum at the $t$ value given by
+\begin{align}
+t=-\frac{{\varepsilon_1}'(0)}{{\varepsilon_1}''(0)}
+\end{align}
+The derivatives ${\varepsilon_1}'(0)$ and ${\varepsilon_1}''(0)$ can be obtained from the analytical formula of diffraction efficiencies $\eta_m$ given by equation. 
+In this method, the thing is that we can describe the gradient of figure of merit in equation, i.e. $\vec{g}(\vec{x})$ with respect to transition points $\vec{x} = (x_1,\cdots,x_{2K})$.
 
-\begin{figure}[tb] 
-\centering 
-\includegraphics[width=0.5\columnwidth]{galleria_stampe} 
-\caption[A floating figure]{A floating figure (the lithograph \emph{Galleria di stampe}, of M.~Escher, got from \url{http://www.mcescher.com/}).}
-\label{fig:galleria} 
-\end{figure}
-
-\begin{figure}[tb] 
-\centering 
-\includegraphics{some_vector_graphics} 
-\caption[A floating figure]{A floating figure with text typeset in "Utopia Latex", a font provided in the template-folder for typesetting figures with greek characters. The text has been "outlined" for best compatibility with the repro during the printing.}
-\label{fig:vector_graphics} 
-\end{figure}
-
-
-The figure~\ref{fig:galleria} is a floating figure and was obtained with the following code:
-\begin{lstlisting}
-\begin{figure}[tb] 
-\centering 
-\includegraphics[width=0.5\columnwidth]{galleria_stampe} 
-\caption[A floating figure]{A floating figure ... }
-\label{fig:galleria} 
-\end{figure}
-\end{lstlisting}
+\begin{align}
+g_i(\vec{x}) = \sum_{m=-N}^{N}2\left[\eta_{m}(\vec{x})-\hat{\eta}\right]\left(\frac{\partial \left | T_{m} \right | ^2  }{\partial \vec{x}} + \frac{\partial \left | D_{m} \right | ^2  }{\partial \vec{x}} + \frac{\partial T_{m}^{*} D_{m}  }{\partial \vec{x}} + \frac{\partial T_{m} D_{m}^{*}  }{\partial \vec{x}}\right)
+\end{align}
+where $\eta_m(\vec{x})$ is calculated by equation and the each derivatives of Fourier coefficient can be expressed by analytical equation. the analytical solution of gradient of diffraction efficiency was described in Appendix 1.
 
 \subsection{Step-transition perturbation approach}
+The sharp material discontinuities at the edges of the aperture mainly contribute to make the diffraction pattern. 
+The perturbations are observed in the field distribution directly after sharp vertical transitions of binary gratings. 
+The TEA calculation, however, yields the constant amplitude and phase.
+This omission of perturbations in TEA makes computing inaccurate within wavelength-scale structures, the so-called non-paraxial domain.
+Thus, we can accurately calculate the diffraction efficiency using the model which combines the TEA with field disturbances caused by sharp transitions in the surface profile calculated by RCWA.
+We define the field perturbation after the $k$:th sharp transition located at the point $x_{k}$ in the surface profile as
+\begin{align}\label{eq:perturbation}
+p_{k}(x) =
+    \begin{cases}
+        U_{k}^{R}(x) - U_{k}^{T}(x) & \text{ if } \left | x  \right | < \Delta_{T} \\
+        0 & \text{elsewhere} 
+    \end{cases}
+\end{align}
+where $U_{k}^{R}(x)$ and $U_{k}^{T}(x)$ are field calculated by RCWA and TEA, respectively and $\Delta_{T}$ is the truncation parameter that is chosen $10\lambda$ in the calculations\cite{Vallius2001}.
+In Fig. \ref{fig:field}, the amplitude and phase of the field distribution directly after an isolated step transition determined by TEA and RCWA is presented.
+The field perturbations of binary gratings consist of only two kinds of oscillation corresponding to left-side and right-side transition point in a ridge.
+Therefore, the constructed field behind binary grating with many transition points is described by the x-axis shifts of the two field perturbations $p_{1}$ and $p_{2}$ in the following expression.
+\begin{align}\label{eq:totalfield}
+\begin{split}
+U(x) &= U^{T}(x) + \sum_{k=1}^{2K}p_{k}(x)\\
+     &= U^{T}(x) + \sum_{k=1}^{K}p_{1}(x-x_{2k-1}) + \sum_{k=1}^{K}p_{2}(x-x_{2k})   
+\end{split}
+\end{align}
+where $2K$ is the total number of the transitions.
+Due to the periodicity of the element, the diffraction amplitude of $m$:th order in far field is given by $m$:th Fourier coefficient of $U(x)$ as
+\begin{align}
+\begin{split}\label{eq:fourier}
+A_{m} &= \frac{1}{g}\int_{0}^{g}U(x)\exp(-i2\pi mx/g)dx \\
+&= T_{m} + D_{m}
+\end{split}
+\end{align}
+where $g$ is the grating period and $T_{m}$ and $D_{m}$ is the Fourier coefficient of the field calculated by TEA and a field perturbation contribution, respectively.
+\begin{align}\label{eq:TmandDm}
+\begin{split}
+&T_{m} = \frac{1}{g}\int_{0}^{g}U^{T}(x)\exp(-i2\pi mx/g)dx\\
+&D_{m} = P_{m}\sum_{k=1}^{K} exp(-i2\pi m x_{2k-1}/g) + P_{-m}\sum_{k=1}^{K} exp(-i2\pi m x_{2k}/g)
+\end{split}
+\end{align}
+where the Fourier coefficient $P_{m}$ of field perturbation $p_{1}(x)$ is expressed as
+\begin{align}\label{eq:FCperturbation}
+P_{m} = \frac{1}{g}\int_{0}^{g} p_{1}(x) \exp(-i2\pi m x/g)dx
+\end{align}
+The Fourier coefficient of $p_{2}(x)$ is $P_{-m}$ in Eq. \ref{eq:TmandDm} because the $p_{2}(x)$ is an even function of $p_{1}(x)$. 
+We found $D_m$ in Eq. \ref{eq:TmandDm} using the Fourier shifting theorem%\cite{Easton2010}.
 
-\lipsum[1-2]
+STPA is an efficient computation method compared with the calculation by RCWA.
+Once we get the Fourier coefficient of the field perturbations $P_{m}$ and $P_{-m}$, they are stored in a memory, and no further RCWA calculation and Fourier transform calculation are necessary.
+Also, $P_m$ contains no explicit dependence on transition point $x_{k}$
+This point is highly useful when calculating the gradient of diffraction efficiencies with respect to transition points to optimize the structures. 
+Finally, for one-dimensional binary gratings, the Fourier coefficient $A_m$ can be expressed as an analytic solution as a function of transition points $x_{k}$.
 
+Once the gradient $\nabla_\mathbf{x}F$ is known, various algorithms are available to optimize the profile.
 
-\begin{figure}[tb]
-\centering
+A gradient search; an optimization consisting of a gradient minimization of a figure of merit $F(\mathbf{x})$ searching for the best profile, is the iterative correction of the set of transition points $\mathbf{x}$.
+We can calculate the gradient of diffraction properties with respect to transition points using STPA because the diffraction efficiencies $\eta_{m}$ calculated by STPA can be expressed as a function of transition point $x_k$.
+ 
+Generally, the main problem associated with gradient-based tools is the choice of initial inputs to obtain a stable convergence.
+To obtain quick and stable convergence, we used the initial profile designed by IFTA. 
+While the designed one using IFTA is no more optimal in the non-paraxial domain, it is expected to have strong local optimum around it.
 
-\subfloat[Asia personas duo.]
-{\includegraphics[width=.45\columnwidth]{lorem}} \quad
-\subfloat[Pan ma signo.]
-{\label{fig:ipsum}%
-\includegraphics[width=.45\columnwidth]{ipsum}} \\
-\subfloat[Methodicamente o uno.]
-{\includegraphics[width=.45\columnwidth]{dolor}} \quad
-\subfloat[Titulo debitas.]
-{\includegraphics[width=.45\columnwidth]{sit}}
-\caption[Tu duo titulo debitas latente]{Tu duo titulo debitas
-latente.}
-\label{fig:esempio}
-\end{figure}
-
-The figure~\ref{fig:esempio} is a floating figure and was obtained with the following code:
-\begin{lstlisting}
-\begin{figure}[tb]
-\centering
-\subfloat[Asia personas duo.]
-{\includegraphics[width=.45\columnwidth]{lorem}} \quad
-\subfloat[Pan ma signo.]
-{\label{fig:ipsum}%
-\includegraphics[width=.45\columnwidth]{ipsum}} \\
-\subfloat[Methodicamente o uno.]
-{\includegraphics[width=.45\columnwidth]{dolor}} \quad
-\subfloat[Titulo debitas.]
-{\includegraphics[width=.45\columnwidth]{sit}}
-\caption[Tu duo titulo debitas latente]{Tu duo titulo debitas latente.}
-\label{fig:esempio}
-\end{figure}
-\end{lstlisting}
+In this study, we use conjugate gradient methods.
+The coordinates of transition points $\mathbf{x}_{n}$ and $\mathbf{x}_{n+1}$ before and after the $n$th iteration are related by 
+\begin{align}\label{eq:iter_cg}
+\mathbf{x}_{n+1} = \mathbf{x}_{n} + \alpha _{n} \mathbf{g}_{n}
+\end{align}
+where $\mathbf{g}_{n}$ is the search direction, i.e. gradient based on STPA for iteration $n$, and $\alpha _{n}$ is the accepted step size from the line search.
+It provides a way to search for a better point along a line in high-dimensional space, which often involves multiple iterations that do not count towards the major iterations%\cite{Nocedal2006}. 
+The gradient is calculated using STPA to get the analytical derivatives. Meanwhile, the diffraction efficiency which is used for line search procedures is evaluated using RCWA during the optimization process.
 
 \subsection{Adjoint method}
 
-\lipsum[3-8]
+We show in this section the mathematical framework of adjoint method using in our wide-angle DOEs optimizations.
+we can calculate electromagnetic field in isotropic medium from given illumination by using time-independant Maxwell's equation:
+\begin{align}\label{eq:maxwell}
+\begin{split}
+&\nabla \times \bm{E} = i k_0 \mu(\bm{r})\bm{H} \\
+&\nabla \times \bm{H} = - i k_0 \epsilon(\bm{r})\bm{E}
+\end{split}
+\end{align}
+where $\mu(\bm{r})$ and $\epsilon(\bm{r})$
+is  permeability and permittivity at location $\bm{r}$, respectively.
+For small perturbation in permeability and permittivity, the variation of elctromagnetic field is the solution of following equations:
+\begin{align}\label{eq:maxwell_pertubation}
+\begin{split}
+&\nabla \times \left( \bm{E} + \Delta\bm{E} \right) = i k_0 \left[\mu(\bm{r})+\Delta\mu(\bm{r})\right]\left( \bm{H} + \Delta\bm{H} \right) \\
+&\nabla \times \left( \bm{H} + \Delta\bm{H} \right) = -i k_0 \left[\epsilon(\bm{r})+\Delta\epsilon(\bm{r})\right]\left(\bm{E} + \Delta\bm{E} \right) .
+\end{split}
+\end{align}
+We can simplify Eq.\ref{eq:maxwell_pertubation} by neglecting the $O(\Delta ^2)$ terms so that equation becomes:
+\begin{align}\label{eq:maxwell_pertubation2}
+\begin{split}
+&\nabla \times \Delta\bm{E} = i k_0 \left[\mu(\bm{r})\Delta\bm{H}+\Delta\mu(\bm{r})\bm{H}\right] \\
+&\nabla \times \Delta\bm{H} = -i k_0 \left[\epsilon(\bm{r})\Delta\bm{E}+\Delta\epsilon(\bm{r})\bm{E}\right]
+\end{split}
+\end{align}
+which is a valid approximation if the change in the electromagnetic field from $\Delta \mu$ and $\Delta \epsilon$ is sufficiently small.
+The addition of this tiny perturbation $\Delta \mu$ and $\Delta \epsilon$ at location $\bm{r}$ can be treated as the dipole with polarization density $\bm{P}$ and a magnetization density $\bm{M}$ given by:
+\begin{align}\label{eq:dipole}
+\bm{P(r)}=\Delta\epsilon(\bm{r})\bm{E(r)} \qquad \bm{M(r)}=\Delta\mu(\bm{r})\bm{H(r)}
+\end{align}
+By introducing Green's tensors, this dipole produces scattered fields to location $\bm{r'}$ ,which are described by:
+\begin{align}\label{eq:scatter_field}
+\begin{split}
+&\Delta\bm{E(\bm{r'})} = \bm{\hat{G}_{EP}}(\bm{r'},\bm{r})\bm{P(r)} +\bm{\hat{G}_{EM}}(\bm{r'},\bm{r})\bm{M(r)} \\
+&\Delta\bm{H(\bm{r'})} = \bm{\hat{G}_{HP}}(\bm{r'},\bm{r})\bm{P(r)}+\bm{\hat{G}_{HM}}(\bm{r'},\bm{r})\bm{M(r)}
+\end{split}
+\end{align}
+where $\bm{M(r)}$ terms can be omitted because $\Delta \mu(\bm{r}) = 0$ in our material.
+In addition, the Green's tensors in a reciporcal medium can be expressed by:
+\begin{align}\label{eq:green_tensor}
+\begin{split}
+&\bm{\hat{G}_{EP}}(\bm{r'},\bm{r})= \bm{\hat{G}_{EP}}(\bm{r},\bm{r'})\\ 
+&\bm{\hat{G}_{HP}}(\bm{r'},\bm{r})= -\bm{\hat{G}_{EM}}(\bm{r},\bm{r'})
+\end{split}
+\end{align}
 
+In the main text, the diffraction efficiencies $\eta_m$ can be obtained by transmitted power flow going to the diffraction order represented by plane wave $\mathbf{E_m},\mathbf{H_m}$ : 
+\begin{align}\label{eq:powerflow}
+\begin{split}
+\eta_m &=\left | t_m \right |^2 \\
+&=\left | \int_\Lambda \left[ \mathbf{E}(\bm{r'}) \times \mathbf{H_m^-}(\bm{r'}) - \mathbf{E_m^-}(\bm{r'}) \times  \mathbf{H}(\bm{r'}) \right]\cdot \mathbf{n_z} \, d\bm{x} \right |^2
+\end{split}
+\end{align}
+where both fields are evaluated at the $r'=(x,z_h)$ on the plane above the grating and the overlap integral is performed for a single grating period.
+For the sake of simplicity, we assume the permittivity distribution does not depend on y-axis.
+where both fields are evaluated at the $z=z_0$ plane above the grating, and the overlap integral is performed for a single grating period. The $k$-vector of $\mathbf{E_m},\mathbf{H_m}$ is $(-k_x,0,k_z)$ and $k$-vector of $\mathbf{E_m^-},\mathbf{H_m^-}$ is $(k_x,0,-k_z)$ and and transmitted amplitude $t_m$ is normalized by $\left| \left( \mathbf{E_m} \times \mathbf{H_m^-} - \mathbf{E_m^-} \times  \mathbf{H_m} \right) \cdot \mathbf{n_z} \right| = 1$, where $\mathbf{n_z}$ is unit vector along $z$-axis.
+Similar to Eq. \ref{eq:maxwell_pertubation} and \ref{eq:maxwell_pertubation2}, the change of $\eta_m$ for a small perturbation in permittivity $\Delta \epsilon$ at a location $\bm{r}$ in the grating layer is given by:
+\begin{align}\label{eq:deltaDE}
+\begin{split}
+\Delta\eta_m &= 2\Re \left\{ t_m^\ast 
+ \int \left[ \Delta\bm{E}(\bm{r'}) \times \bm{H_{m}^{-}}(\bm{r'})\right. \right. \\
+ &\left. \phantom{\int} \left. \hspace{1.7cm} - \bm{E_{m}^{-}}(\bm{r'}) \times  \Delta\bm{H}(\bm{r'})\right] \cdot \mathbf{n_z}  d\bm{x}\right\} 
+\end{split}
+\end{align}
+Using Eq. \ref{eq:dipole} and \ref{eq:scatter_field}, the derivative of diffraction efficiency with respect to permittivity is
+\begin{align}\label{eq:deltaDE_greentensor}
+\begin{split}
+\frac{\partial \eta_m }{\partial \epsilon(\bm{r})} &=  2\Re \left\{ t_m^\ast \int \left[ \bm{\hat{G}_{EP}}(\bm{r'},\bm{r})\bm{E(r)} \times \bm{H_{m}^{-}}(\bm{r'})\right. \right. \\
+&\left. \phantom{\int}\left. \hspace{1.7cm} - \bm{E_{m}^{-}}(\bm{r'}) \times  \bm{\hat{G}_{HP}}(\bm{r'},\bm{r})\bm{E(r)}\right] \cdot \mathbf{n_z}  d\bm{x}\right\}
+\end{split}
+\end{align}
+Applying the triple product rule of vector identities and reciprocity of Green's tensor in Eq.\ref{eq:green_tensor}, we obtain the adjoint field:
+\begin{align}\label{eq:deltaDE_adjoint}
+    &\begin{split}
+        \frac{\partial \eta_m }{\partial \epsilon(\bm{r})} &=  2\Re \left( t_m^\ast  \int \left\{ \bm{\hat{G}_{EP}}(\bm{r},\bm{r'}) \left[\bm{H_{m}^{-}}(\bm{r'}) \times \bm{n_z}\right] \right. \right.\\
+        &\left. \phantom{\int}\left. \hspace{1.5cm} - \bm{\hat{G}_{EM}}(\bm{r},\bm{r'}) \left[\bm{E_{m}^{-}}(\bm{r'})\times \bm{n_z}\right] \right\}   d\bm{x} \cdot \bm{E(r)} \right)\\
+        &=2\Re\left[t_m^\ast \bm{E_{adj}(r)}  \cdot \bm{E(r)} \right]
+    \end{split}
+\end{align}
+where adjoint field $\mathbf{E_{adj}(r)}=$ can be obtained by an solution of Maxwell's equation with illumination condition which is a plane wave generated by the polarization ($\bm{H_{m}^{-}}(\bm{r'}) \times \bm{n_z}$) and magnetization densities ($\bm{E_{m}^{-}}(\bm{r'})\times \bm{n_z}$) from dipole expression.

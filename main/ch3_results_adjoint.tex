@@ -1,13 +1,172 @@
 \cleardoublepage
-\chapter{Optimized Diffractive Optical Elements by Adjoint Method}
+\chapter{Optimization based on Adjoint-State Method}
 In this chapter we will see some examples of tables and figures.
 \section{Process of optimization}
 \subsection{Binarization}
+In this section, we discuss our method for driving the dielectric continuum to discrete values of dielectric material and air and maintaining the fabricable minimum feature size over the iterative process.
+For the optimization, the starting point is a structure designed IFTA with applying a spatial filter to generate the dielectric continuum.
+We update a design density $\bm{\rho}$ which have a value from $0$ to $1$, rather than updating the permittivity distribution $\bm{\epsilon}$ directly.
+For generating a structure with larger feature sizes, a spatial loss-pass filter can be applied to $\bm{\rho}$ to created a filtered density $\bm{\tilde{\rho}}$ :
+\begin{align}\label{eq:filter}
+\tilde{\rho}_i=\frac{\sum_{j\in\mathbb{N}_i} \bm{W_{ij}} \rho_{j}}{\sum_{j\in\mathbb{N}_i} \bm{W_{ij}}}
+\end{align}
+where $\mathbb{N}_i$ denotes the design region, and $\bm{W_{ij}}$ is the weighting matrix, defined for a blurring radius of $R$ as
+\begin{align}
+\bm{W_{ij}} = R - \left | r_i - r_j \right | 
+\end{align}
+with $\left | r_i - r_j \right |$ being the distance between pixel $i$ and $j$.
+This defines a spatial filter on $\bm{\rho}$ with the effect of smoothing out features with a length scale below $R$. 
+The effect of this filter with \SI{300}{\nano\metre} radius of $R$ on a sample design density distribution is illustrated in Figure.
+The filtered geometry becomes then a binary pattern using projection function.
+We define $\bm{\bar{\tilde{\rho}}}$ as the projected density, which is created from blurred density $\bm{\tilde{\rho}}$ as
+\begin{align}\label{eq:projection}
+\bar{\tilde{\rho}}_i=\frac{\tanh\left ( \beta t\right )+\tanh \left (\beta \left [\tilde{\rho}_i-t \right ]\right )}{\tanh\left ( \beta t\right )+\tanh \left (\beta \left [1-t \right ]\right )}
+\end{align}
+where $t$ is a threshold factor between $0$ and $1$ which controls the threshold of the projection, typically $0.5$, and $\beta$ controls the strength of the projection, bigger value delivers harder binarization.
+The projected density distribution in Fig is recreated from blurred pattern in Fig.
+with $t=0.5$ and $\beta= 300$.
+we also observe that the combination of circular spatial blurring filter and projection function can remove tiny features.
+The final relative permittivity distribution from the projected pattern is shown in Fig
+In addition, we can describe an analytical solution of the determination of $\frac{\partial \bm{\epsilon}}{\partial \bm{\bar{\tilde{\rho}}}}$, $\frac{\partial \bm{\bar{\tilde{\rho}}}}{\partial \bm{\tilde{\rho}}}$, $\frac{\partial \bm{\tilde{\rho}}}{\partial \bm{{\rho}}}$ \cite{Wang2011}, these filters can be combined with the derivatives of figure of merit calculated by adjoint method.
+The optimization problem is solved by limited-memory Broyden-Fletcher-Goldfarb-Shanno(L-BFGS) with bound constraints.
 \subsection{Critical demension}
 \section{One-dimensional diffractive optical elements}
 \subsection{Reconstruction results}
 \subsection{Comparison with results by STPA}
 \section{Two-dimensional diffractive optical elements}
+Two kinds of 2D fan-out gratings were selected for verification of the proposed design approach.
+First one is a common multi-spot generator which creates a $7\times7$ array of spots with equal intensity distribution, and the other generates a two-dimensional array of spots with the multilevel intensity distribution.
+To evaluate DOEs with various diffraction efficiency distribution, we define uniformity error (UE) and normalized root-mean-square error (NRMS) $\sigma$ as follows:
+\begin{align}\label{eq:ue}
+UE = \frac{\tilde{\eta}_{\mathrm{max}}-\tilde{\eta}_{\mathrm{min}}}{\tilde{\eta}_{\mathrm{max}}+\tilde{\eta}_{\mathrm{min}}}
+\end{align}
+\begin{align}\label{eq:rmse}
+\sigma=\sqrt{\frac{1}{MN}\sum(\tilde{\eta}_{m,n}-\tilde{\eta}_{\mathrm{obj}})^2}
+\end{align}
+where $\tilde{\eta}_{\mathrm{max}}$ and $\tilde{\eta}_{\mathrm{min}}$ represent the maximal and minimum intensity of the relative diffraction efficiency $\tilde{\eta}=\frac{\eta}{\eta_{\mathrm{obj}}}$,respectively.
+The $\eta_{m,n}$ is the diffraction efficiency in orders on 2D array and $M$,$N$ is the total number of diffraction orders along horizontal and vertical axis, respectively.
+The target diffraction efficiency distributions $\eta_{\mathrm{obj}} \in [0,1]^{m \times n}$ have uniform or specific entries.
+The spot energy distribution can be designed for any distribution meeting the application's requirements.
+The NRMS with scaled diffraction efficiency $\tilde{\eta}$ is preferable to with normal diffraction efficiency ${\eta}$ because normalizing root-mean square error facilitates the comparison among various diffraction efficiency distributions with different scales from diverse DOEs.
+Lower values of both UE and NRMS indicate less residual variance so that our objective is to minimize UE and NRMS of a DOE design given certain diffraction efficiency distribution.
+The fused silica (\ce{SiO2}) was selected as material for DOE.
+The refractive index of \ce{SiO2} is assumed as $n_{2}=1.45$.
+transverse electric (TE)-polarized (i.e., E-field component along the y-axis monochromatic light with a wavelength of $\lambda= \SI{940}{\nano \metre}$ is incident wave from the substrate side with normal incidence angle.
+The grating period is \SI{5x5}{\micro \metre} and the pixel size is \SI{100x100}{\nano \metre}.
+The depth of the grating was selected as $d= \SI{1.18}{\micro \metre}$.
+Thus, the maximal diffraction angle of $7\times7$ and $7\times5$ diffractive beam splitter are about \ang{53} at $(3,3)^\mathrm{th}$ order and \ang{43} at $(2,3)^\mathrm{th}$ order from $(0,0)^\mathrm{th}$ order, respectively. 
 \subsection{Reconstruction results}
+To optimization this $7\times 7$ diffractive beam splitter, we define our figure of merit as Eq. \ref{eq:fom} with the uniform intensity distribution of target efficiency $\eta_\mathrm{obj}$ and find the local optima using L-BFGS with the gradient calculated by the adjoint method.
+The objective of this design is to create the grating structure can accurately diffract the incident light into $49$ in different directions with equal intensity distribution.
+Figure shows the merit function as a function of the optimization iterations of $7\times7$ and $7\times5$ diffractive beam splitters.
+To minimize the modifications of the adjoint sensitivity, the projection strength factor incrementally increases every $10$ iterations for binarization.
+This function results in immediate effects in the figure of merit, which can be visualized as disconnections on the dash lines.
+The figure of merit converged well and the algorithm found the optimum point after $80$ iterations in both cases.
+The simulated diffraction efficiency distributions of DOEs before and after optimization is shown in Fig. 
+These results are calculated for normally incident TE polarized light, i.e. the electric field component along the y-axis.
+In the diffraction pattern, the maximal diffraction angle is about \ang{53} at $(3,3)^\text{th}$  order spot from the center.
+For an accurate comparison, we calculated the total diffraction efficiency, UE, and NRMS of two different situations of two diffractive beam splitters: Initial and optimized.
+The total diffraction efficiency of $49$ spots of initial and optimized $7\times7$ spot-array generators are \SI{79.96}{\percent}, and \SI{79.71}{\percent}, respectively.
+this optimized element thus has no degradation in total efficiency while there is considerable improvement in UE from $63.79\%$ to $16.35\%$ and NRMS from $32.62\%$ to $7.74\%$, through adjoint-based optimization.
+Over optimization process, $7\times5$ spot-array generator also has significant improvement in UE from $81.1\%$ to $6.98\%$ and NRMS from $37.93\%$ to $3.78\%$.
+Moreover, total diffraction efficiency of $35$ spots created by this DOE slightly increase from $74.45\%$ to $78.48\%$.
+The numerical accuracy of these theoretical values, calculated by RCWA solver, and has less than $0.2\%$ error has benchmarked in next section.
+
+Furthermore, we applied our optimization method to the diffractive beam splitter with multilevel intensity distribution corresponding to Fig. 
+As listed in Table \ref{tab:targetratio}, we specify different $9$ groups have spot array with a specific intensity ratio, where group A, B, C, D, E, B', C', D' and E' have \numlist{1.0;1.5;2.0;2.5;1.0;1.5;2.0;2.5;1.0} of intensity ratio, respectively.
+%%%%%%%%%%% table %%%%%%%%%%%%%%%%%%%%%%
+\begin{table}[htbp]
+\centering
+\caption{\bf The target efficiency depends on groups in beam splitter with multilevel intensity distribution}
+\begin{tabular}{cccccc}
+\hline
+Groups & A & B & C & D & E   \\
+& &  B' & C' & D' & E' \\
+\hline
+Efficiency ratio & 1.0 & 1.5 & 2.0 & 2.5 & 1.0 \\
+Target efficiency (\%) & 1.63 & 2.45 & 3.27 & 4.08 & 1.63 \\
+\hline
+\end{tabular}
+  \label{tab:targetratio}
+\end{table}
+%%%%%%%%%%% table %%%%%%%%%%%%%%%%%%%%%
+To optimize this diffractive beam splitter, we also use the figure of merit function in Eq. \ref{eq:fom} with target efficiency distribution of above entries (see Table \ref{tab:targetratio}). 
+Over the course of multiple iterations, the dielectric continuum in the device converges to the dielectric constant of either silica or air from initial dielectric distribution designed by IFTA.
+We finally obtain a diffraction pattern distribution of optimized design nearly identical to the target pattern. The optimization convergence and pattern distribution before and after optimization are shown in the supplement 1.
+Quantitively, total efficiency of this DOE slightly increase from \SI{75.20}{\percent} to \SI{78.28}{\percent} and UE and NRMS consequently reach \SI{8.45}{\percent} from \SI{74.73}{\percent} and \SI{4.14}{\percent} from \SI{55.15}{\percent}.
+
+These results prove that the optimization algorithm is suitable for designing wide-angle diffractive beam splitters with various shapes of spot array and intensity distributions.
+Based on optimized designs, we fabricated and characterized diffractive beam-splitters. 
+The detail experimental results are presented in the following section.
 \subsection{Experimental results}
-\lipsum[3]
+The diffractive beam splitters were fabricated by lithography using electron-beam and dry etching to create a chromium etch mask, and then by reactive ion etching to obtain \ce{SiO2} binary surface relief structures.
+The optical elements are optically characterized using a TE-polarized \SI{940}{\nano \metre} wavelength beam as our input source.
+We detect the diffracted light beams using a mobile single-pixel detector with a high dynamic range.
+To focus of both the simulation and experiment to facilitate a quantitative comparison, we normalized the measured results using scaling factor $\gamma$:
+%%%%%%%%%%%%%% equation %%%%%%%%%%%%%
+\begin{align}\label{eq:normalization}
+\gamma = \frac{\sum \eta_{m,n}^{E} \cdot \eta_{m,n}^{S}}{\sum \left|\eta_{m,n}^{E}\right|^2} 
+\end{align}
+%%%%%%%%%%%%%% equation %%%%%%%%%%%%%
+where $\eta_{m,n}^{E}$,$\eta_{m,n}^{S}$ are experimental and simulated efficiency in $(m,n)^\text{th}$ diffraction orders, respectively.
+The comparison between theoretical and experimental diffraction efficiencies of $7\times7$ and $7\times5$ beam-splitter creating uniform intensity array are presented in Table \ref{tab:results_uniform}.
+The experimental data show that the DOEs operates with high-performance of uniformity.
+The UE of $7\times7$ and $7\times5$ beam splitters are measure to $23.35 \%$ and $14.42 \%$, respectively, which is close to the calculated values.
+In addition, excellent agreement in NRMS values of the DOEs are obervered between the simulation and the measurement.
+%%%%%%%%%%% table %%%%%%%%%%%%%%%%%%%%%%
+\begin{table}[htbp]
+\centering
+\caption{\bf Comparsion with the theoretical and experimental properties of the $7\times7$ and $7\times5$ beam splitters.}
+\begin{tabular}{lcccc} 
+\hline
+{}&\multicolumn{2}{c}{$7\times7$ beam splitter}&\multicolumn{2}{c}{$7\times5$ beam splitter}\\
+{} & Calculated & Measured & Calculated & Measured\\
+\hline
+Total efficiency($\%$) & 79.71  & 75.35 & 78.48  & 73.86   \\
+Normalized efficiency($\%$)& {}  & 79.01 & {}  & 78.14 \\   
+UE($\%$) & 16.35 & 23.35& 06.98 & 14.42    \\
+NRMS($\%$) & 07.74 & 12.76 & 03.78 & 10.50 \\
+\hline
+\end{tabular}
+  \label{tab:results_uniform}
+\end{table}
+%%%%%%%%%%% table %%%%%%%%%%%%%%%%%%%%%
+Little discrepancies between the simulated and experimental efficiencies are due in part to minor geometric imperfections in the fabricated samples.
+For an accurate comparison between theoretical and measured results, we analyze correlation of these data using mean absolute percentage deviation (MAPE) as a ratio defined by the formula:
+%%%%%%%%%%%%%% equation %%%%%%%%%%%%%
+\begin{align}\label{eq:correlation}
+\mathrm{MAPE} =\frac{1}{MN} \sum \left|\frac{\eta_{m,n}^{S}-\eta_{m,n}^{E}}{\eta_{m,n}^{S}}\right|
+\end{align}
+%%%%%%%%%%%%%% equation %%%%%%%%%%%%%
+where $\eta_{m,n}^{S}$,$\eta_{m,n}^{E}$ are simulated and experimental efficiency in $(m,n)^\text{th}$ diffraction orders and $M$,$N$ is the total number of diffraction orders in two dimensional array.
+The MAPE of $7\times7$ and $7\times5$ beam splitters are calculated to \SI{7.24}{\percent} and \SI{5.00}{\percent}, respectively, which represents measurements demonstrate excellent reproducibility of the simulated results in a quantitative manner.
+
+we also measured the diffraction efficiency of multi-intensity level beam splitter fabricated based on optimized design. 
+A scanning electron microscopy (SEM) image of the optical element is presented in Fig, and theoretical and experimental diffraction efficiencies of beam splitter with array groups and their objective efficiency are summarized in Fig.
+Tilted SEM images of the beam-splitter show vertical sidewalls, indicative of high-quality etching.
+The experimental plot show that these elements operate with excellent agreement with repect to the objectvise in the overall intensity distributions.
+For an accurate comparison, we present the total diffraction efficiency, UE, and RMSE of simulated and measured one in Table \ref{tab:results_multilevel}.
+The UE and NRMS of fabricated sample are measured to \SI{14.54}{\percent} and \SI{9.81}{\percent}, respectively.
+%%%%%%%%%%% table %%%%%%%%%%%%%%%%%%%%%%
+\begin{table}[htbp]
+\centering
+\caption{\bf Comparsion with the simulated and experimental properties of the beam splitters with multilevel diffraction intensity distribution.}
+\begin{tabular}{ccc}
+\hline
+ & Simulated & Measured  \\
+\hline
+Total efficiency (\%) & 78.27 & 74.20 \\
+Normalized efficiency (\%) & {} & 77.99\\
+UE (\%) & 08.46 & 14.54\\
+NRMS (\%) & 04.14 & 09.81\\
+\hline
+\end{tabular}
+  \label{tab:results_multilevel}
+\end{table}
+%%%%%%%%%%% table %%%%%%%%%%%%%%%%%%%%%
+
+Moreover, the results of the comparison show that the experimental results have a strong correlation with the theoretical results, where the MAPE of this beam splitter is calculated to \SI{5.99}{\percent}.
+The only noticeable deviation in the measurement is a small mismatch of diffraction efficiency in a few orders the emerge due to minor fabrication errors. 
+In general the diffraction efficiency in orders often strongly depends on the errors in fabrication processes, e.g., etching depth, feature width, slope steepness, and feature rounding.
+Nevertheless, the fabricated samples based on optimized design overall display experimental performances which are significantly higher than the theoretical performances of initial designs before optimization.
+In other words, our methodology can readily create robust high-performance, multifunctional optical elements with wide-angle spot array that show theoretical and experimental performances that far exceed the current state-of-the-art recently reported %\cite{Hao2019,Zhang2019,Liu2020}.
